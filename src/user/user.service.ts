@@ -24,4 +24,10 @@ export class UserService {
 
     return users;
   }
+
+  async getUser(userId: string) {
+    const user = await this.userRepository.getUser(userId);
+
+    return user;
+  }
 }

@@ -5,7 +5,7 @@ import { UserService } from './user.service';
 import { CreateUserDTO } from './dto/createUser.dto';
 
 const mockedUser = {
-  id: 1,
+  id: '1',
   fullName: 'merouane',
   email: 'rouibah.merouane@gmail.com',
 };
@@ -23,6 +23,7 @@ describe('UserController', () => {
           useFactory: () => ({
             createUser: jest.fn(),
             getAll: jest.fn(),
+            getUser: jest.fn(),
           }),
         },
       ],
@@ -57,6 +58,14 @@ describe('UserController', () => {
     const users = await controller.getAllUser();
 
     expect(users).toEqual([mockedUser]);
+  });
+
+  it('given an user id, it should return a user', async () => {
+    (service.getUser as jest.Mock).mockResolvedValue(mockedUser);
+
+    const user = await controller.getUser('1');
+
+    expect(user).toBe(mockedUser);
   });
 
   /*  it('should return validation error if the password is not 12 characters ', async () => {

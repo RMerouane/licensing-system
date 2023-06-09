@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
 
 const mockedUser = {
-  userId: 1,
+  id: '1',
   fullName: 'merouane',
   email: 'rouibah.merouane@gmail.com',
 };
@@ -21,6 +21,7 @@ describe('UserService', () => {
           useFactory: () => ({
             createUser: jest.fn(),
             getAll: jest.fn(),
+            getUser: jest.fn(),
           }),
         },
       ],
@@ -52,5 +53,14 @@ describe('UserService', () => {
     const users = await service.getAll();
 
     expect(users).toEqual([mockedUser]);
+  });
+
+  it('given an id, it should return the user if exist', async () => {
+    const userId = '1';
+
+    (repository.getUser as jest.Mock).mockResolvedValue(mockedUser);
+    const user = await service.getUser(userId);
+
+    expect(user).toEqual(mockedUser);
   });
 });
