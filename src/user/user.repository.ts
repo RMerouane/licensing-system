@@ -27,4 +27,10 @@ export class UserRepository extends Repository<User> {
 
     return user;
   }
+
+  async getUserByEmail(email: string) {
+    const user = await this.findOne({ where: { email } });
+
+    return user ? true : false;
+  }
 }

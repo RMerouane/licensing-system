@@ -22,6 +22,7 @@ describe('UserService', () => {
             createUser: jest.fn(),
             getAll: jest.fn(),
             getUser: jest.fn(),
+            getUserByEmail: jest.fn(),
           }),
         },
       ],
@@ -46,6 +47,19 @@ describe('UserService', () => {
     const user = await service.createUser(userPayload);
 
     expect(user).toEqual(mockedUser);
+  });
+
+  it('should throw an error if user already exist', () => {
+    const userPayload = {
+      fullName: 'merouane',
+      email: 'rouibah.merouane@gmail.com',
+      password: '123456789AZEIZEE',
+    };
+    (repository.getUserByEmail as jest.Mock).mockResolvedValue(true);
+
+    expect(service.createUser(userPayload)).rejects.toThrowError(
+      `User with email ${userPayload.email} already exist`,
+    );
   });
 
   it('should return all users', async () => {
