@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -14,10 +15,11 @@ export class User {
   @Column()
   fullName: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @CreateDateColumn()
@@ -25,4 +27,10 @@ export class User {
 
   @UpdateDateColumn()
   updatedDate: Date;
+
+  toJSON() {
+    const { password, ...rest } = this;
+
+    return rest;
+  }
 }
