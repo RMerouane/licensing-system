@@ -22,6 +22,7 @@ describe('UserController', () => {
           provide: UserService,
           useFactory: () => ({
             createUser: jest.fn(),
+            getAll: jest.fn(),
           }),
         },
       ],
@@ -48,6 +49,14 @@ describe('UserController', () => {
 
     expect(user).toBe(mockedUser);
     expect(service.createUser).toHaveBeenCalled();
+  });
+
+  it('should return all users', async () => {
+    (service.getAll as jest.Mock).mockResolvedValue([mockedUser]);
+
+    const users = await controller.getAllUser();
+
+    expect(users).toEqual([mockedUser]);
   });
 
   /*  it('should return validation error if the password is not 12 characters ', async () => {

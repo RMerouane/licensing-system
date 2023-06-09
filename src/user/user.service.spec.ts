@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { BadRequestException } from '@nestjs/common';
+import { UserRepository } from './user.repository';
 
 const mockedUser = {
   userId: 1,
@@ -10,13 +10,24 @@ const mockedUser = {
 
 describe('UserService', () => {
   let service: UserService;
+  let repository: UserRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UserService],
+      providers: [
+        UserService,
+        {
+          provide: UserRepository,
+          useFactory: () => ({
+            createUser: jest.fn(),
+            getAll: jest.fn(),
+          }),
+        },
+      ],
     }).compile();
 
     service = module.get<UserService>(UserService);
+    repository = module.get<UserRepository>(UserRepository);
   });
 
   it('should be defined', () => {
@@ -27,34 +38,19 @@ describe('UserService', () => {
     const userPayload = {
       fullName: 'merouane',
       email: 'rouibah.merouane@gmail.com',
-      pwd: '123456789AZEIZEE',
+      password: '123456789AZEIZEE',
     };
+    (repository.createUser as jest.Mock).mockResolvedValue(mockedUser);
+
     const user = await service.createUser(userPayload);
 
     expect(user).toEqual(mockedUser);
   });
 
-  it('should return validation error if the password is not 12 characters ', async () => {
-    const userPayload = {
-      fullName: 'merouane',
-      email: 'rouibah.merouane@gmail.com',
-      pwd: '1234',
-    };
+  it('should return all users', async () => {
+    (repository.getAll as jest.Mock).mockResolvedValue([mockedUser]);
+    const users = await service.getAll();
 
-    expect(() => service.createUser(userPayload)).toThrowError(
-      'password must have minimum 12 diffrents characters',
-    );
-  });
-
-  it("should throw validation error if the password doesn't have 12 diffrents characters", () => {
-    const userPayload = {
-      fullName: 'merouane',
-      email: 'rouibah.merouane@gmail.com',
-      pwd: 'azertyuiopqqqq',
-    };
-
-    expect(() => service.createUser(userPayload)).toThrowError(
-      'password must have minimum 12 diffrents characters',
-    );
+    expect(users).toEqual([mockedUser]);
   });
 });

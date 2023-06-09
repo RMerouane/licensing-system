@@ -1,4 +1,7 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+
+import { CreateUserDTO } from './dto/createUser.dto';
+import { UserRepository } from './user.repository';
 
 export interface UserInput {
   fullName: string;
@@ -8,18 +11,17 @@ export interface UserInput {
 
 @Injectable()
 export class UserService {
-  createUser(user: UserInput) {
-    const uniqueChracteres = new Set(user.pwd);
+  constructor(private readonly userRepository: UserRepository) {}
 
-    if (uniqueChracteres.size < 12) {
-      throw new Error('password must have minimum 12 diffrents characters');
-    }
+  async createUser(createUserDto: CreateUserDTO) {
+    const user = await this.userRepository.createUser(createUserDto);
 
-    if (user)
-      return {
-        userId: 1,
-        fullName: user.fullName,
-        email: user.email,
-      };
+    return user;
+  }
+
+  async getAll() {
+    const users = this.userRepository.getAll();
+
+    return users;
   }
 }
