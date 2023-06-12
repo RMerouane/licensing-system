@@ -4,8 +4,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+
+import { Device } from '../device/device.entity';
 
 @Entity()
 export class User {
@@ -21,6 +24,9 @@ export class User {
   @Column()
   @Exclude()
   password: string;
+
+  @OneToMany(() => Device, (device) => device.user)
+  devices: Device[];
 
   @CreateDateColumn()
   createdDate: Date;
