@@ -5,7 +5,6 @@ import { Device } from './device.entity';
 import { DeviceInput } from './dto/addDevice.dto';
 import { GetDeviceDTO } from './dto/getDevice.dto';
 import { User } from '../user/user.entity';
-import { GetDevicesDTO } from './dto/getDevices.dto';
 
 @Injectable()
 export class DeviceRepository extends Repository<Device> {
@@ -22,6 +21,12 @@ export class DeviceRepository extends Repository<Device> {
     });
 
     await this.save(device);
+
+    return device;
+  }
+
+  async getDevice(getDeviceDto: GetDeviceDTO) {
+    const device = await this.findOne({ where: { id: getDeviceDto.deviceId } });
 
     return device;
   }

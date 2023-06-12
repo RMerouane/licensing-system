@@ -4,7 +4,6 @@ import { DeviceRepository } from './device.repository';
 import { AddDeviceDTO } from './dto/addDevice.dto';
 import { GetDeviceDTO } from './dto/getDevice.dto';
 import { UserRepository } from '../user/user.repository';
-import { GetDevicesDTO } from './dto/getDevices.dto';
 
 @Injectable()
 export class DeviceService {
@@ -34,4 +33,15 @@ export class DeviceService {
     return device;
   }
 
+  async getDevice(getDeviceDto: GetDeviceDTO) {
+    const device = await this.deviceRepository.getDevice(getDeviceDto);
+
+    if (!device) {
+      throw new NotFoundException(
+        `device with id ${getDeviceDto.deviceId} not found`,
+      );
+    }
+
+    return device;
+  }
 }
